@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "714812426753",
+    "project_id": "krispcallcalltest",
+    "storage_bucket": "krispcallcalltest.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:714812426753:android:4673cceb7e7e99af530e00",
+        "android_client_info": {
+          "package_name": "com.krispcall.testing"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "714812426753-knbmv3sesahnqg9mmt7lvd8dseb0cgse.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAKWvv08BOs1TeCMBLUuZ9gjiI9YyDKCGM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "714812426753-knbmv3sesahnqg9mmt7lvd8dseb0cgse.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

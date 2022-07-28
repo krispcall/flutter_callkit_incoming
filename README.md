@@ -1,92 +1,415 @@
-# flutter_callkit_incoming
+# Flutter Callkit Incoming
+
+A Flutter plugin to show incoming call in your Flutter app(Custom for Android/Callkit for iOS).
+
+[![pub package](https://img.shields.io/pub/v/flutter_callkit_incoming.svg)](https://pub.dev/packages/flutter_callkit_incoming)
+[![Build Status](https://github.com/hiennguyen92/flutter_callkit_incoming/actions/workflows/main.yml/badge.svg)](https://github.com/hiennguyen92/flutter_callkit_incoming/actions/workflows/main.yml)
+
+<a href="https://www.buymeacoffee.com/hiennguyen92" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/default-orange.png" alt="Buy Me A Coffee" height="41" width="174"></a>
+
+## :star: Features
+
+* Show an incoming call
+* Start an outgoing call
+* Custom UI Android/Callkit for iOS
+* Example using Pushkit/VoIP for iOS
+
+  <br>
+
+## iOS: ONLY WORKING ON REAL DEVICE, not on simulator(Callkit framework not working on simulator)
+
+<br>
+
+## 🚀&nbsp; Installation
+
+1. Install Packages
+
+  * Run this command:
+    ```console
+    flutter pub add flutter_callkit_incoming
+    ```
+  * Add pubspec.yaml:
+    ```console
+        dependencies:
+          flutter_callkit_incoming: any
+    ```
+2. Configure Project
+  * Android
+     * AndroidManifest.xml
+     ```
+      <manifest...>
+          ...
+          <!-- 
+              Using for load image from internet
+          -->
+          <uses-permission android:name="android.permission.INTERNET"/>
+      </manifest>
+     ```
+  * iOS
+     * Info.plist
+      ```
+      <key>UIBackgroundModes</key>
+      <array>
+          <string>processing</string>
+          <string>remote-notification</string>
+          <string>voip</string>
+      </array>
+      ```
+
+3. Usage
+  * Import
+    ```console
+    import 'package:flutter_callkit_incoming/flutter_callkit_incoming.dart';
+    ``` 
+  * Received an incoming call
+    ```dart
+      this._currentUuid = _uuid.v4();
+      var params = <String, dynamic>{
+        'id': _currentUuid,
+        'nameCaller': 'Hien Nguyen',
+        'appName': 'Callkit',
+        'avatar': 'https://i.pravatar.cc/100',
+        'handle': '0123456789',
+        'type': 0,
+        'textAccept': 'Accept',
+        'textDecline': 'Decline',
+        'textMissedCall': 'Missed call',
+        'textCallback': 'Call back',
+        'duration': 30000,
+        'extra': <String, dynamic>{'userId': '1a2b3c4d'},
+        'headers': <String, dynamic>{'apiKey': 'Abc@123!', 'platform': 'flutter'},
+        'android': <String, dynamic>{
+          'isCustomNotification': true,
+          'isShowLogo': false,
+          'isShowCallback': false,
+          'isShowMissedCallNotification': true,
+          'ringtonePath': 'system_ringtone_default',
+          'backgroundColor': '#0955fa',
+          'backgroundUrl': 'https://i.pravatar.cc/500',
+          'actionColor': '#4CAF50'
+        },
+        'ios': <String, dynamic>{
+          'iconName': 'CallKitLogo',
+          'handleType': 'generic',
+          'supportsVideo': true,
+          'maximumCallGroups': 2,
+          'maximumCallsPerCallGroup': 1,
+          'audioSessionMode': 'default',
+          'audioSessionActive': true,
+          'audioSessionPreferredSampleRate': 44100.0,
+          'audioSessionPreferredIOBufferDuration': 0.005,
+          'supportsDTMF': true,
+          'supportsHolding': true,
+          'supportsGrouping': false,
+          'supportsUngrouping': false,
+          'ringtonePath': 'system_ringtone_default'
+        }
+      };
+      await FlutterCallkitIncoming.showCallkitIncoming(params);
+    ```
+  * Show miss call notification
+    ```dart
+      this._currentUuid = _uuid.v4();
+      var params = <String, dynamic>{
+        'id': this._currentUuid,
+        'nameCaller': 'Hien Nguyen',
+        'handle': '0123456789',
+        'type': 1,
+        'textMissedCall': 'Missed call',
+        'textCallback': 'Call back',
+        'extra': <String, dynamic>{'userId': '1a2b3c4d'},
+      };
+      await FlutterCallkitIncoming.showMissCallNotification(params);
+    ```
+
+  * Started an outgoing call
+    ```dart
+      this._currentUuid = _uuid.v4();
+      var params = <String, dynamic>{
+        'id': this._currentUuid,
+        'nameCaller': 'Hien Nguyen',
+        'handle': '0123456789',
+        'type': 1,
+        'extra': <String, dynamic>{'userId': '1a2b3c4d'},
+        'ios': <String, dynamic>{'handleType': 'generic'}
+      };
+      await FlutterCallkitIncoming.startCall(params);
+    ```
+
+  * Ended an incoming/outgoing call
+    ```dart
+      var params = <String, dynamic>{'id': this._currentUuid};
+      await FlutterCallkitIncoming.endCall(params);
+    ```
+
+  * Ended all calls
+    ```dart
+      await FlutterCallkitIncoming.endAllCalls();
+    ```
+
+  * Get active calls. iOS: return active calls from Callkit, Android: only return last call
+    ```dart
+      await FlutterCallkitIncoming.activeCalls();
+    ```
+    Output
+    ```json
+    [{"id": "8BAA2B26-47AD-42C1-9197-1D75F662DF78", ...}]
+    ```
+
+  * Get device push token VoIP. iOS: return deviceToken, Android: Empty
+
+    ```dart
+      await FlutterCallkitIncoming.getDevicePushTokenVoIP();
+    ```
+    Output
+
+    ```json
+    <device token>
+
+    //Example
+    d6a77ca80c5f09f87f353cdd328ec8d7d34e92eb108d046c91906f27f54949cd
+    
+    ```
+    Make sure using `SwiftFlutterCallkitIncomingPlugin.sharedInstance?.setDevicePushTokenVoIP(deviceToken)` inside AppDelegate.swift (<a href="https://github.com/hiennguyen92/flutter_callkit_incoming/blob/master/example/ios/Runner/AppDelegate.swift">Example</a>)
+    ```swift
+    func pushRegistry(_ registry: PKPushRegistry, didUpdate credentials: PKPushCredentials, for type: PKPushType) {
+        print(credentials.token)
+        let deviceToken = credentials.token.map { String(format: "%02x", $0) }.joined()
+        //Save deviceToken to your server
+        SwiftFlutterCallkitIncomingPlugin.sharedInstance?.setDevicePushTokenVoIP(deviceToken)
+    }
+    
+    func pushRegistry(_ registry: PKPushRegistry, didInvalidatePushTokenFor type: PKPushType) {
+        print("didInvalidatePushTokenFor")
+        SwiftFlutterCallkitIncomingPlugin.sharedInstance?.setDevicePushTokenVoIP("")
+    }
+    ```
 
 
+  * Listen events
+    ```dart
+      FlutterCallkitIncoming.onEvent.listen((event) {
+        switch (event!.name) {
+          case CallEvent.ACTION_CALL_INCOMING:
+            // TODO: received an incoming call
+            break;
+          case CallEvent.ACTION_CALL_START:
+            // TODO: started an outgoing call
+            // TODO: show screen calling in Flutter
+            break;
+          case CallEvent.ACTION_CALL_ACCEPT:
+            // TODO: accepted an incoming call
+            // TODO: show screen calling in Flutter
+            break;
+          case CallEvent.ACTION_CALL_DECLINE:
+            // TODO: declined an incoming call
+            break;
+          case CallEvent.ACTION_CALL_ENDED:
+            // TODO: ended an incoming/outgoing call
+            break;
+          case CallEvent.ACTION_CALL_TIMEOUT:
+            // TODO: missed an incoming call
+            break;
+          case CallEvent.ACTION_CALL_CALLBACK:
+            // TODO: only Android - click action `Call back` from missed call notification
+            break;
+          case CallEvent.ACTION_CALL_TOGGLE_HOLD:
+            // TODO: only iOS
+            break;
+          case CallEvent.ACTION_CALL_TOGGLE_MUTE:
+            // TODO: only iOS
+            break;
+          case CallEvent.ACTION_CALL_TOGGLE_DMTF:
+            // TODO: only iOS
+            break;
+          case CallEvent.ACTION_CALL_TOGGLE_GROUP:
+            // TODO: only iOS
+            break;
+          case CallEvent.ACTION_CALL_TOGGLE_AUDIO_SESSION:
+            // TODO: only iOS
+            break;
+          case CallEvent.ACTION_DID_UPDATE_DEVICE_PUSH_TOKEN_VOIP:
+            // TODO: only iOS
+            break;
+        }
+      });
+    ```
+  * Call from Native (iOS PushKit) 
 
-## Getting started
+    ```swift
+      //Swift
+      var info = [String: Any?]()
+      info["id"] = "44d915e1-5ff4-4bed-bf13-c423048ec97a"
+      info["nameCaller"] = "Hien Nguyen"
+      info["handle"] = "0123456789"
+      info["type"] = 1
+      //... set more data
+      SwiftFlutterCallkitIncomingPlugin.sharedInstance?.showCallkitIncoming(flutter_callkit_incoming.Data(args: info), fromPushKit: true)
+    ```
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+    <br>
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+    ```swift
+      //OR
+      let data = flutter_callkit_incoming.Data(id: "44d915e1-5ff4-4bed-bf13-c423048ec97a", nameCaller: "Hien Nguyen", handle: "0123456789", type: 0)
+      data.nameCaller = "Johnny"
+      data.extra = ["user": "abc@123", "platform": "ios"]
+      //... set more data
+      SwiftFlutterCallkitIncomingPlugin.sharedInstance?.showCallkitIncoming(data, fromPushKit: true)
+    ```
+    
+    <br>
 
-## Add your files
+    ```objc
+      //Objective-C
+      #if __has_include(<flutter_callkit_incoming/flutter_callkit_incoming-Swift.h>)
+      #import <flutter_callkit_incoming/flutter_callkit_incoming-Swift.h>
+      #else
+      #import "flutter_callkit_incoming-Swift.h"
+      #endif
 
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
+      Data * data = [[Data alloc]initWithId:@"44d915e1-5ff4-4bed-bf13-c423048ec97a" nameCaller:@"Hien Nguyen" handle:@"0123456789" type:1];
+      [data setNameCaller:@"Johnny"];
+      [data setExtra:@{ @"userId" : @"HelloXXXX", @"key2" : @"value2"}];
+      //... set more data
+      [SwiftFlutterCallkitIncomingPlugin.sharedInstance showCallkitIncoming:data fromPushKit:YES];
+    ```
+    
+    <br>
 
-```
-cd existing_repo
-git remote add origin https://gitlab.com/dristisushan/flutter_callkit_incoming.git
-git branch -M main
-git push -uf origin main
-```
+    ```swift
+      //send custom event from native
+      SwiftFlutterCallkitIncomingPlugin.sharedInstance?.sendEventCustom("customEvent", body: ["customKey": "customValue"])
 
-## Integrate with your tools
+    ```
 
-- [ ] [Set up project integrations](https://gitlab.com/dristisushan/flutter_callkit_incoming/-/settings/integrations)
+4. Properties
 
-## Collaborate with your team
+    | Prop            | Description                                                             | Default     |
+    | --------------- | ----------------------------------------------------------------------- | ----------- |
+    |  **`id`**       | UUID identifier for each call. UUID should be unique for every call and when the call is  ended, the same UUID for that call to be used. suggest using <a href='https://pub.dev/packages/uuid'>uuid</a>    | Required    |
+    | **`nameCaller`**| Caller's name.                                                          | _None_      |
+    | **`appName`**   | App's name. using for display inside Callkit(iOS).                      |   App Name, `Deprecated for iOS > 14, default using App name`  |
+    | **`avatar`**    | Avatar's URL used for display for Android. `/android/src/main/res/drawable-xxxhdpi/ic_default_avatar.png`                             |    _None_   |
+    | **`handle`**    | Phone number/Email/Any.                                                 |    _None_   |
+    |   **`type`**    |  0 - Audio Call, 1 - Video Call                                         |     `0`     |
+    | **`duration`**  | Incoming call/Outgoing call display time (second). If the time is over, the call will be missed.                                                                                     |    `30000`  |
+   | **`textAccept`**  | Text `Accept` used in Android                                            |    `Accept`  |
+   | **`textDecline`**  | Text `Decline` used in Android                                           |    `Decline`  |
+   | **`textMissedCall`**  | Text `Missed Call` used in Android (show in miss call notification)  |    `Missed Call`  |
+   | **`textCallback`**  | Text `Call back` used in Android (show in miss call notification)     |    `Call back`  |
+    |   **`extra`**   | Any data added to the event when received.                              |     `{}`    |
+    |   **`headers`** | Any data for custom header avatar/background image.                     |     `{}`    |
+    |  **`android`**  | Android data needed to customize UI.                                    |    Below    |
+    |    **`ios`**    | iOS data needed.                                                        |    Below    |
 
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Automatically merge when pipeline succeeds](https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
+    <br>
+    
+* Android
 
-## Test and Deploy
+    | Prop                        | Description                                                             | Default          |
+    | --------------------------- | ----------------------------------------------------------------------- | ---------------- |
+    | **`isCustomNotification`**  | Using custom notifications.                                             | `false`          |
+    |       **`isShowLogo`**      | Show logo app inside full screen. `/android/src/main/res/drawable-xxxhdpi/ic_logo.png` | `false`          |
+    |       **`isShowMissedCallNotification`**      | Show missed call notification when timeout | `true`          |
+    |       **`isShowCallback`**      | Show callback action from miss call notification. | `true`          |
+    |      **`ringtonePath`**     | File name ringtone. put file into `/android/app/src/main/res/raw/ringtone_default.pm3`                                                                                                    |`system_ringtone_default` <br>using ringtone default of the phone|
+    |     **`backgroundColor`**   | Incoming call screen background color.                                  |     `#0955fa`    |
+    |      **`backgroundUrl`**    | Using image background for Incoming call screen.                        |       _None_     |
+    |      **`actionColor`**      | Color used in button/text on notification.                              |    `#4CAF50`     |
 
-Use the built-in continuous integration in GitLab.
+    <br>
+    
+* iOS
 
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/index.html)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing(SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
+    | Prop                                      | Description                                                             | Default     |
+    | ----------------------------------------- | ----------------------------------------------------------------------- | ----------- |
+    |               **`iconName`**              | App's Icon. using for display inside Callkit(iOS)                       | `CallKitLogo` <br> using from `Images.xcassets/CallKitLogo`    |
+    |              **`handleType`**             | Type handle call `generic`, `number`, `email`                           | `generic`   |
+    |             **`supportsVideo`**           |                                                                         |   `true`    |
+    |          **`maximumCallGroups`**          |                                                                         |     `2`     |
+    |       **`maximumCallsPerCallGroup`**      |                                                                         |     `1`     |
+    |           **`audioSessionMode`**          |                                                                         |   _None_, `gameChat`, `measurement`, `moviePlayback`, `spokenAudio`, `videoChat`, `videoRecording`, `voiceChat`, `voicePrompt`  |
+    |        **`audioSessionActive`**           |                                                                         |    `true`   |
+    |   **`audioSessionPreferredSampleRate`**   |                                                                         |  `44100.0`  |
+    |**`audioSessionPreferredIOBufferDuration`**|                                                                         |  `0.005`    |
+    |            **`supportsDTMF`**             |                                                                         |    `true`   |
+    |            **`supportsHolding`**          |                                                                         |    `true`   |
+    |          **`supportsGrouping`**           |                                                                         |    `true`   |
+    |         **`supportsUngrouping`**          |                                                                         |   `true`    |
+    |           **`ringtonePath`**              | Add file to root project xcode  `/ios/Runner/Ringtone.caf`  and Copy Bundle Resources(Build Phases)                                                                                                               |`Ringtone.caf`<br>`system_ringtone_default` <br>using ringtone default of the phone|
 
-***
 
-# Editing this README
+5. Source code
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thank you to [makeareadme.com](https://www.makeareadme.com/) for this template.
+    ```
+    please checkout repo github
+    https://github.com/hiennguyen92/flutter_callkit_incoming
+    ```
+    * <a href='https://github.com/hiennguyen92/flutter_callkit_incoming'>https://github.com/hiennguyen92/flutter_callkit_incoming</a>
+    * <a href='https://github.com/hiennguyen92/flutter_callkit_incoming/blob/master/example/lib/main.dart'>Example</a>
 
-## Suggestions for a good README
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
+  <br>
 
-## Name
-Choose a self-explaining name for your project.
+6. Pushkit - Received VoIP and Wake app from Terminated State (only for IOS)
+  * Please check <a href="https://github.com/hiennguyen92/flutter_callkit_incoming/blob/master/PUSHKIT.md">PUSHKIT.md</a> setup Pushkit for IOS
 
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
+  <br>
 
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
+7. Todo
+  *
+  *
 
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
+    <br>
 
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
+## :bulb: Demo
 
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
-
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
-
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
-
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
-
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
-
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
-
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
-
-## License
-For open source projects, say how it is licensed.
-
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+1. Demo Illustration: 
+2. Image
+<table>
+  <tr>
+    <td>iOS(Lockscreen)</td>
+    <td>iOS(full screen)</td>
+    <td>iOS(Alert)</td>
+  </tr>
+  <tr>
+    <td>
+      <img src="https://raw.githubusercontent.com/hiennguyen92/flutter_callkit_incoming/master/images/image1.png" width="220">
+    </td>
+    <td>
+      <img src="https://raw.githubusercontent.com/hiennguyen92/flutter_callkit_incoming/master/images/image2.png" width="220">
+    </td>
+    <td>
+      <img src="https://raw.githubusercontent.com/hiennguyen92/flutter_callkit_incoming/master/images/image3.png" width="220">
+    </td>
+  </tr>
+  <tr>
+    <td>Android(Lockscreen) - Audio</td>
+    <td>Android(Alert) - Audio</td>
+    <td>Android(Lockscreen) - Video</td>
+  </tr>
+  <tr>
+    <td>
+      <img src="https://raw.githubusercontent.com/hiennguyen92/flutter_callkit_incoming/master/images/image4.jpg" width="220">
+    </td>
+    <td>
+      <img src="https://raw.githubusercontent.com/hiennguyen92/flutter_callkit_incoming/master/images/image5.jpg" width="220">
+    </td>
+    <td>
+      <img src="https://raw.githubusercontent.com/hiennguyen92/flutter_callkit_incoming/master/images/image6.jpg" width="220">
+    </td>
+  </tr>
+  <tr>
+    <td>Android(Alert) - Video</td>
+    <td>isCustomNotification: false</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>
+      <img src="https://raw.githubusercontent.com/hiennguyen92/flutter_callkit_incoming/master/images/image7.jpg" width="220">
+    </td>
+    <td>
+      <img src="https://raw.githubusercontent.com/hiennguyen92/flutter_callkit_incoming/master/images/image8.jpg" width="220">
+    </td>
+  </tr>
+ </table>
