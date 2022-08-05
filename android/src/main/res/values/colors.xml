@@ -8,4 +8,6 @@
 
     <color name="action_text">#FFFFFF</color>
     <color name="ripple_main_color">#80ffffff</color>
+    <color name="decline_color">#DB312B</color>
+    <color name="accept_color">#4C9610</color>
 </resources>

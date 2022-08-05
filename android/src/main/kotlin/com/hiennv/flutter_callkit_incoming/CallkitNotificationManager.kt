@@ -139,19 +139,9 @@ class CallkitNotificationManager(private val context: Context) {
                     R.id.llDecline,
                     getDeclinePendingIntent(notificationId, data)
             )
-            val textDecline = data.getString(EXTRA_CALLKIT_TEXT_DECLINE, "")
-            notificationViews?.setTextViewText(
-                    R.id.tvDecline,
-                    if (TextUtils.isEmpty(textDecline)) context.getString(R.string.text_decline) else textDecline
-            )
             notificationViews?.setOnClickPendingIntent(
                     R.id.llAccept,
                     getAcceptPendingIntent(notificationId, data)
-            )
-            val textAccept = data.getString(EXTRA_CALLKIT_TEXT_ACCEPT, "")
-            notificationViews?.setTextViewText(
-                    R.id.tvAccept,
-                    if (TextUtils.isEmpty(textAccept)) context.getString(R.string.text_accept) else textAccept
             )
             val avatarUrl = data.getString(EXTRA_CALLKIT_AVATAR, "")
             if (avatarUrl != null && avatarUrl.isNotEmpty()) {
