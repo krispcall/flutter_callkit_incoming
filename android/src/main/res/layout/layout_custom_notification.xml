@@ -4,12 +4,6 @@
     android:layout_height="wrap_content"
     android:orientation="horizontal"
     android:background="@android:color/transparent"
-    android:paddingLeft="24dp"
-    android:paddingStart="24dp"
-    android:paddingEnd="24dp"
-    android:paddingRight="24dp"
-    android:paddingTop="23dp"
-    android:paddingBottom="23dp"
     android:baselineAligned="false">
 
     <LinearLayout
@@ -32,6 +26,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
                 android:layout_gravity="center"
+                android:textAppearance="@style/TextAppearance.Compat.Notification.Title"
                 android:text="@string/text_caller"
                 android:textSize="16sp" />
         </LinearLayout>
@@ -67,6 +62,7 @@
                     android:layout_height="match_parent"
                     android:gravity="center_vertical"
                     android:layout_gravity="center"
+                    android:textAppearance="@style/TextAppearance.Compat.Notification.Title"
                     android:text="@string/text_incoming_call"
                     android:textSize="14sp" />
             </LinearLayout>
@@ -82,8 +78,8 @@
 
         <LinearLayout
             android:id="@+id/llDecline"
-            android:layout_width="44dp"
-            android:layout_height="44dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:clickable="true"
             android:focusable="true"
             android:gravity="center"
@@ -91,8 +87,8 @@
             android:orientation="horizontal"
             android:background="@android:color/transparent">
             <ImageView
-                android:layout_width="44dp"
-                android:layout_height="44dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:src="@mipmap/ic_decline"
                 android:scaleType="fitXY"
                 android:layout_gravity="center"
@@ -102,8 +98,8 @@
 
         <LinearLayout
             android:id="@+id/llAccept"
-            android:layout_width="44dp"
-            android:layout_height="44dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:layout_marginStart="@dimen/base_margin"
             android:clickable="true"
             android:focusable="true"
@@ -112,8 +108,8 @@
             android:orientation="horizontal"
             android:background="@android:color/transparent">
             <ImageView
-                android:layout_width="44dp"
-                android:layout_height="44dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:src="@mipmap/ic_accept"
                 android:scaleType="fitXY"
                 android:layout_gravity="center"

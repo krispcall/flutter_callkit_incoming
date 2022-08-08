@@ -108,7 +108,7 @@ class CallkitNotificationManager(private val context: Context) {
                 smallIcon = R.drawable.ic_video_missed
             } else {
                 if (smallIcon >= 0) {
-                    smallIcon = R.drawable.ic_call_missed
+                    smallIcon = R.drawable.ic_accept
                 }
             }
             notificationBuilder.setSmallIcon(smallIcon)
