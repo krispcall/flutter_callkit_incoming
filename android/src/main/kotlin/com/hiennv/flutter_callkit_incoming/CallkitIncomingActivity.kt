@@ -46,6 +46,7 @@ import android.text.TextUtils
 import com.hiennv.flutter_callkit_incoming.CallkitIncomingBroadcastReceiver.Companion.EXTRA_CALLKIT_TEXT_ACCEPT
 import com.hiennv.flutter_callkit_incoming.CallkitIncomingBroadcastReceiver.Companion.EXTRA_CALLKIT_TEXT_DECLINE
 import android.util.Log;
+import com.hiennv.flutter_callkit_incoming.CallkitIncomingBroadcastReceiver.Companion.EXTRA_CALLKIT_CHANNEL_NAME
 import com.hiennv.flutter_callkit_incoming.CallkitIncomingBroadcastReceiver.Companion.EXTRA_CALLKIT_CHANNEL_NUMBER
 
 
@@ -83,13 +84,12 @@ class CallkitIncomingActivity : Activity() {
     private var endedCallkitIncomingBroadcastReceiver = EndedCallkitIncomingBroadcastReceiver()
 
     private lateinit var ivBackground: ImageView
-    private lateinit var llBackgroundAnimation: RippleRelativeLayout
 
-    private lateinit var tvNameCaller: TextView
     private lateinit var tvChannelNumber: TextView
+    private lateinit var tvChannelName: TextView
+
     private lateinit var tvNumber: TextView
-    private lateinit var ivLogo: ImageView
-    private lateinit var ivAvatar: CircleImageView
+    private lateinit var ivAvatar: ImageView
 
     private lateinit var llAction: LinearLayout
     private lateinit var ivAcceptCall: ImageView
@@ -167,14 +167,10 @@ class CallkitIncomingActivity : Activity() {
     private fun incomingData(intent: Intent) {
         val data = intent.extras?.getBundle(EXTRA_CALLKIT_INCOMING_DATA)
         if (data == null) finish()
-        tvChannelNumber.text = data?.getString(EXTRA_CALLKIT_NAME_CALLER, "")
+        tvChannelName.text = data?.getString(EXTRA_CALLKIT_CHANNEL_NAME, "")
 
-        tvNameCaller.text = data?.getString(EXTRA_CALLKIT_NAME_CALLER, "")
         tvChannelNumber.text = data?.getString(EXTRA_CALLKIT_CHANNEL_NUMBER, "")
-        tvNumber.text = data?.getString(EXTRA_CALLKIT_HANDLE, "")
-
-        val isShowLogo = data?.getBoolean(EXTRA_CALLKIT_IS_SHOW_LOGO, false)
-        ivLogo.visibility = if (isShowLogo == true) View.VISIBLE else View.INVISIBLE
+        tvNumber.text = data?.getString(EXTRA_CALLKIT_NAME_CALLER, "")
 
         val avatarUrl = data?.getString(EXTRA_CALLKIT_AVATAR, "")
         if (avatarUrl != null && avatarUrl.isNotEmpty()) {
@@ -182,8 +178,8 @@ class CallkitIncomingActivity : Activity() {
             val headers = data.getSerializable(EXTRA_CALLKIT_HEADERS) as HashMap<String, Any?>
             getPicassoInstance(this@CallkitIncomingActivity, headers)
                 .load(avatarUrl)
-                .placeholder(R.drawable.ic_default_avatar)
-                .error(R.drawable.ic_default_avatar)
+                .placeholder(R.mipmap.ic_placeholder)
+                .error(R.mipmap.ic_placeholder)
                 .into(ivAvatar)
         }
 
@@ -237,16 +233,12 @@ class CallkitIncomingActivity : Activity() {
 
     private fun initView() {
         ivBackground = findViewById(R.id.ivBackground)
-        llBackgroundAnimation = findViewById(R.id.llBackgroundAnimation)
-        llBackgroundAnimation.layoutParams.height =
-            Utils.getScreenWidth() + Utils.getStatusBarHeight(this@CallkitIncomingActivity)
-        llBackgroundAnimation.startRippleAnimation()
-
-        tvNameCaller = findViewById(R.id.tvNameCaller)
+        tvChannelName = findViewById(R.id.tvChannelName)
         tvChannelNumber = findViewById(R.id.tvChannelNumber)
         tvNumber = findViewById(R.id.tvNumber)
-        ivLogo = findViewById(R.id.ivLogo)
         ivAvatar = findViewById(R.id.ivAvatar)
+
+        ivAvatar.clipToOutline = true
 
         llAction = findViewById(R.id.llAction)
 

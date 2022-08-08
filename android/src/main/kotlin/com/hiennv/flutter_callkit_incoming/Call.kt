@@ -11,6 +11,7 @@ data class Data(val args: Map<String, Any?>) {
     var id: String = (args["id"] as? String) ?: ""
     var uuid: String = (args["id"] as? String) ?: ""
     var nameCaller: String = (args["nameCaller"] as? String) ?: ""
+    var channelName: String = (args["channelName"] as? String) ?: ""
     var channelNumber: String = (args["channelNumber"] as? String) ?: ""
     var appName: String = (args["appName"] as? String) ?: ""
     var handle: String = (args["handle"] as? String) ?: ""
@@ -76,6 +77,7 @@ data class Data(val args: Map<String, Any?>) {
         val bundle = Bundle()
         bundle.putString(CallkitIncomingBroadcastReceiver.EXTRA_CALLKIT_ID, id)
         bundle.putString(CallkitIncomingBroadcastReceiver.EXTRA_CALLKIT_NAME_CALLER, nameCaller)
+        bundle.putString(CallkitIncomingBroadcastReceiver.EXTRA_CALLKIT_CHANNEL_NAME, channelName)
         bundle.putString(CallkitIncomingBroadcastReceiver.EXTRA_CALLKIT_CHANNEL_NUMBER, channelNumber)
         bundle.putString(CallkitIncomingBroadcastReceiver.EXTRA_CALLKIT_HANDLE, handle)
         bundle.putString(CallkitIncomingBroadcastReceiver.EXTRA_CALLKIT_AVATAR, avatar)
@@ -124,7 +126,8 @@ data class Data(val args: Map<String, Any?>) {
             data.id = bundle.getString(CallkitIncomingBroadcastReceiver.EXTRA_CALLKIT_ID, "")
             data.nameCaller =
                     bundle.getString(CallkitIncomingBroadcastReceiver.EXTRA_CALLKIT_NAME_CALLER, "")
-
+            data.channelName =
+                bundle.getString(CallkitIncomingBroadcastReceiver.EXTRA_CALLKIT_CHANNEL_NAME, "")
             data.channelNumber =
                 bundle.getString(CallkitIncomingBroadcastReceiver.EXTRA_CALLKIT_CHANNEL_NUMBER, "")
             data.appName =
