@@ -28,6 +28,7 @@
                 android:layout_gravity="center"
                 android:textAppearance="@style/TextAppearance.Compat.Notification.Title"
                 android:text="@string/text_caller"
+                android:maxLines="1"
                 android:textSize="16sp" />
         </LinearLayout>
         <LinearLayout

@@ -95,6 +95,8 @@
                     android:gravity="center"
                     android:textColor="@android:color/white"
                     android:textSize="24sp"
+                    android:layout_marginStart="@dimen/base_margin"
+                    android:layout_marginEnd="@dimen/base_margin"
                     android:visibility="visible"
                     tools:text="@string/text_caller"
                     android:ellipsize="end"
