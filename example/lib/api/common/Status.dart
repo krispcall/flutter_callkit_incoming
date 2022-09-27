@@ -1,0 +1,12 @@
+enum Status {
+  SUCCESS,
+  ERROR,
+  SERVER_EXCEPTION,
+  BLOCK_LOADING,
+  PROGRESS_LOADING,
+  NO_ACTION,
+  Outbound,
+  Inbound,
+  TIMEOUT,
+  STATUS_CODE_401
+}

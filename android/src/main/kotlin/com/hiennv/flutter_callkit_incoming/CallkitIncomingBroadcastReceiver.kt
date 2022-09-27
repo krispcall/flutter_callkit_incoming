@@ -6,8 +6,10 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 
 class CallkitIncomingBroadcastReceiver : BroadcastReceiver() {
+    private val TAG = "CallkitIncomingActivity"
 
     companion object {
 
@@ -105,21 +107,27 @@ class CallkitIncomingBroadcastReceiver : BroadcastReceiver() {
 
     @SuppressLint("MissingPermission")
     override fun onReceive(context: Context, intent: Intent) {
+        Log.e(TAG, "onReceive: ", )
         val callkitNotificationManager = CallkitNotificationManager(context)
         val action = intent.action ?: return
         val data = intent.extras?.getBundle(EXTRA_CALLKIT_INCOMING_DATA) ?: return
         when (action) {
             ACTION_CALL_INCOMING -> {
                 try {
+                    Log.e(TAG, "onReceive: ", )
                     callkitNotificationManager.showIncomingNotification(data)
                     sendEventFlutter(ACTION_CALL_INCOMING, data)
                     addCall(context, Data.fromBundle(data))
 
                     if (callkitNotificationManager.incomingChannelEnabled()) {
+                        Log.e(TAG, "onReceive: if", )
                         val soundPlayerServiceIntent =
                             Intent(context, CallkitSoundPlayerService::class.java)
                         soundPlayerServiceIntent.putExtras(data)
                         context.startService(soundPlayerServiceIntent)
+                    }
+                    else{
+                        Log.e(TAG, "onReceive: else", )
                     }
                 } catch (error: Exception) {
                     error.printStackTrace()

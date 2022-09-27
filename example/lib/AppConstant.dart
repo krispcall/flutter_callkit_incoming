@@ -1,0 +1,11 @@
+enum AppConstant {
+  DEVELOPMENT,
+  QA,
+  UAT,
+  LOCAL,
+  REDESIGN,
+  REFACTOR,
+  MVP,
+  PRODUCTION,
+  ENVIRONMENT
+}

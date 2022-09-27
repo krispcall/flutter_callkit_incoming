@@ -36,6 +36,7 @@ import com.squareup.picasso.OkHttp3Downloader
 import android.view.ViewGroup.MarginLayoutParams
 import android.os.PowerManager
 import android.text.TextUtils
+import android.util.Log
 import com.hiennv.flutter_callkit_incoming.CallkitIncomingBroadcastReceiver.Companion.EXTRA_CALLKIT_CHANNEL_NAME
 import com.hiennv.flutter_callkit_incoming.CallkitIncomingBroadcastReceiver.Companion.EXTRA_CALLKIT_CHANNEL_NUMBER
 import com.hiennv.flutter_callkit_incoming.CallkitIncomingBroadcastReceiver.Companion.EXTRA_CALLKIT_TEXT_ACCEPT
@@ -44,6 +45,7 @@ import com.hiennv.flutter_callkit_incoming.CallkitIncomingBroadcastReceiver.Comp
 
 class CallkitIncomingActivity : Activity() {
 
+    private val TAG = "CallkitIncomingActivity"
     companion object {
 
         const val ACTION_ENDED_CALL_INCOMING =
@@ -88,6 +90,7 @@ class CallkitIncomingActivity : Activity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Log.e(TAG, "onCreate: ", )
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
             window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
             setTurnScreenOn(true)

@@ -1,0 +1,9 @@
+enum WorkspaceStatus {
+  ACTIVE,
+  SUSPENDED,
+  EXPIRED,
+  CANCELLED,
+  INACTIVE,
+  UNDER_REVIEW,
+  DELETED
+}

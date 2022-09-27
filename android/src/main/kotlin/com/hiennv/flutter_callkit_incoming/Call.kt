@@ -1,13 +1,14 @@
 package com.hiennv.flutter_callkit_incoming
 
 import android.os.Bundle
+import android.util.Log
 
 class Call {
 }
 
 @Suppress("UNCHECKED_CAST")
 data class Data(val args: Map<String, Any?>) {
-
+    private val TAG = "CallkitIncomingActivity"
     var id: String = (args["id"] as? String) ?: ""
     var uuid: String = (args["id"] as? String) ?: ""
     var nameCaller: String = (args["nameCaller"] as? String) ?: ""
@@ -120,6 +121,7 @@ data class Data(val args: Map<String, Any?>) {
             CallkitIncomingBroadcastReceiver.EXTRA_CALLKIT_IS_SHOW_MISSED_CALL_NOTIFICATION,
             isShowMissedCallNotification
         )
+        Log.e(TAG, "toBundle: ${incomingCallNotificationChannelName}", )
         bundle.putString(
             CallkitIncomingBroadcastReceiver.EXTRA_CALLKIT_INCOMING_CALL_NOTIFICATION_CHANNEL_NAME,
             incomingCallNotificationChannelName
@@ -132,9 +134,11 @@ data class Data(val args: Map<String, Any?>) {
     }
 
     companion object {
-
+        private val TAG = "CallkitIncomingActivity"
         fun fromBundle(bundle: Bundle): Data {
             val data = Data(emptyMap())
+
+
             data.id = bundle.getString(CallkitIncomingBroadcastReceiver.EXTRA_CALLKIT_ID, "")
             data.nameCaller =
                 bundle.getString(CallkitIncomingBroadcastReceiver.EXTRA_CALLKIT_NAME_CALLER, "")
@@ -199,6 +203,7 @@ data class Data(val args: Map<String, Any?>) {
             data.incomingCallNotificationChannelName = bundle.getString(
                 CallkitIncomingBroadcastReceiver.EXTRA_CALLKIT_INCOMING_CALL_NOTIFICATION_CHANNEL_NAME
             )
+            Log.e(TAG, "toBundle: ${data.incomingCallNotificationChannelName}", )
             data.missedCallNotificationChannelName = bundle.getString(
                 CallkitIncomingBroadcastReceiver.EXTRA_CALLKIT_MISSED_CALL_NOTIFICATION_CHANNEL_NAME
             )

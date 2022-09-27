@@ -5,6 +5,7 @@ import android.app.Activity
 import android.content.Context
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import androidx.annotation.NonNull
 import androidx.annotation.Nullable
 
@@ -21,6 +22,8 @@ import io.flutter.plugin.common.MethodChannel.Result
 class FlutterCallkitIncomingPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
 
     companion object {
+
+        private val TAG = "CallkitIncomingActivity"
 
         @SuppressLint("StaticFieldLeak")
         private var instance: FlutterCallkitIncomingPlugin? = null
@@ -127,6 +130,7 @@ class FlutterCallkitIncomingPlugin : FlutterPlugin, MethodCallHandler, ActivityA
         try {
             when (call.method) {
                 "showCallkitIncoming" -> {
+                    Log.e(TAG, "onMethodCall: showCallkitIncoming", )
                     val data = Data(call.arguments()?: HashMap<String, Any?>())
                     data.from = "notification"
                     //send BroadcastReceiver
