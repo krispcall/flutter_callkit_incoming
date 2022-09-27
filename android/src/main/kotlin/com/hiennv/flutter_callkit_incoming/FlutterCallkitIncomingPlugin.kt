@@ -241,6 +241,4 @@ class FlutterCallkitIncomingPlugin : FlutterPlugin, MethodCallHandler, ActivityA
             eventSink = null
         }
     }
-
-
 }

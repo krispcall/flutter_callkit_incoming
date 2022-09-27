@@ -23,9 +23,9 @@ data class Data(val args: Map<String, Any?>) {
     var textMissedCall: String = (args["textMissedCall"] as? String) ?: ""
     var textCallback: String = (args["textCallback"] as? String) ?: ""
     var extra: HashMap<String, Any?> =
-            (args["extra"] ?: HashMap<String, Any?>()) as HashMap<String, Any?>
+        (args["extra"] ?: HashMap<String, Any?>()) as HashMap<String, Any?>
     var headers: HashMap<String, Any?> =
-            (args["headers"] ?: HashMap<String, Any?>()) as HashMap<String, Any?>
+        (args["headers"] ?: HashMap<String, Any?>()) as HashMap<String, Any?>
     var from: String = ""
 
     var isCustomNotification: Boolean = false
@@ -36,6 +36,8 @@ data class Data(val args: Map<String, Any?>) {
     var backgroundUrl: String
     var actionColor: String
     var isShowMissedCallNotification: Boolean = true
+    var incomingCallNotificationChannelName: String? = null
+    var missedCallNotificationChannelName: String? = null
 
     var isAccepted: Boolean = false
 
@@ -50,6 +52,8 @@ data class Data(val args: Map<String, Any?>) {
             backgroundUrl = (android["backgroundUrl"] as? String) ?: ""
             actionColor = (android["actionColor"] as? String) ?: "#4CAF50"
             isShowMissedCallNotification = (android["isShowMissedCallNotification"] as? Boolean) ?: true
+            incomingCallNotificationChannelName = android["incomingCallNotificationChannelName"] as? String
+            missedCallNotificationChannelName = android["missedCallNotificationChannelName"] as? String
         } else {
             isCustomNotification = (args["isCustomNotification"] as? Boolean) ?: false
             isShowLogo = (args["isShowLogo"] as? Boolean) ?: false
@@ -90,31 +94,39 @@ data class Data(val args: Map<String, Any?>) {
         bundle.putSerializable(CallkitIncomingBroadcastReceiver.EXTRA_CALLKIT_EXTRA, extra)
         bundle.putSerializable(CallkitIncomingBroadcastReceiver.EXTRA_CALLKIT_HEADERS, headers)
         bundle.putBoolean(
-                CallkitIncomingBroadcastReceiver.EXTRA_CALLKIT_IS_CUSTOM_NOTIFICATION,
-                isCustomNotification
+            CallkitIncomingBroadcastReceiver.EXTRA_CALLKIT_IS_CUSTOM_NOTIFICATION,
+            isCustomNotification
         )
         bundle.putBoolean(
-                CallkitIncomingBroadcastReceiver.EXTRA_CALLKIT_IS_SHOW_LOGO,
-                isShowLogo
+            CallkitIncomingBroadcastReceiver.EXTRA_CALLKIT_IS_SHOW_LOGO,
+            isShowLogo
         )
         bundle.putBoolean(
-                CallkitIncomingBroadcastReceiver.EXTRA_CALLKIT_IS_SHOW_CALLBACK,
-                isShowCallback
+            CallkitIncomingBroadcastReceiver.EXTRA_CALLKIT_IS_SHOW_CALLBACK,
+            isShowCallback
         )
         bundle.putString(CallkitIncomingBroadcastReceiver.EXTRA_CALLKIT_RINGTONE_PATH, ringtonePath)
         bundle.putString(
-                CallkitIncomingBroadcastReceiver.EXTRA_CALLKIT_BACKGROUND_COLOR,
-                backgroundColor
+            CallkitIncomingBroadcastReceiver.EXTRA_CALLKIT_BACKGROUND_COLOR,
+            backgroundColor
         )
         bundle.putString(
-                CallkitIncomingBroadcastReceiver.EXTRA_CALLKIT_BACKGROUND_URL,
-                backgroundUrl
+            CallkitIncomingBroadcastReceiver.EXTRA_CALLKIT_BACKGROUND_URL,
+            backgroundUrl
         )
         bundle.putString(CallkitIncomingBroadcastReceiver.EXTRA_CALLKIT_ACTION_COLOR, actionColor)
         bundle.putString(CallkitIncomingBroadcastReceiver.EXTRA_CALLKIT_ACTION_FROM, from)
         bundle.putBoolean(
-                CallkitIncomingBroadcastReceiver.EXTRA_CALLKIT_IS_SHOW_MISSED_CALL_NOTIFICATION,
-                isShowMissedCallNotification
+            CallkitIncomingBroadcastReceiver.EXTRA_CALLKIT_IS_SHOW_MISSED_CALL_NOTIFICATION,
+            isShowMissedCallNotification
+        )
+        bundle.putString(
+            CallkitIncomingBroadcastReceiver.EXTRA_CALLKIT_INCOMING_CALL_NOTIFICATION_CHANNEL_NAME,
+            incomingCallNotificationChannelName
+        )
+        bundle.putString(
+            CallkitIncomingBroadcastReceiver.EXTRA_CALLKIT_MISSED_CALL_NOTIFICATION_CHANNEL_NAME,
+            missedCallNotificationChannelName
         )
         return bundle
     }
@@ -125,64 +137,70 @@ data class Data(val args: Map<String, Any?>) {
             val data = Data(emptyMap())
             data.id = bundle.getString(CallkitIncomingBroadcastReceiver.EXTRA_CALLKIT_ID, "")
             data.nameCaller =
-                    bundle.getString(CallkitIncomingBroadcastReceiver.EXTRA_CALLKIT_NAME_CALLER, "")
+                bundle.getString(CallkitIncomingBroadcastReceiver.EXTRA_CALLKIT_NAME_CALLER, "")
             data.channelName =
                 bundle.getString(CallkitIncomingBroadcastReceiver.EXTRA_CALLKIT_CHANNEL_NAME, "")
             data.channelNumber =
                 bundle.getString(CallkitIncomingBroadcastReceiver.EXTRA_CALLKIT_CHANNEL_NUMBER, "")
             data.appName =
-                    bundle.getString(CallkitIncomingBroadcastReceiver.EXTRA_CALLKIT_APP_NAME, "")
+                bundle.getString(CallkitIncomingBroadcastReceiver.EXTRA_CALLKIT_APP_NAME, "")
             data.handle =
-                    bundle.getString(CallkitIncomingBroadcastReceiver.EXTRA_CALLKIT_HANDLE, "")
+                bundle.getString(CallkitIncomingBroadcastReceiver.EXTRA_CALLKIT_HANDLE, "")
             data.avatar =
-                    bundle.getString(CallkitIncomingBroadcastReceiver.EXTRA_CALLKIT_AVATAR, "")
+                bundle.getString(CallkitIncomingBroadcastReceiver.EXTRA_CALLKIT_AVATAR, "")
             data.type = bundle.getInt(CallkitIncomingBroadcastReceiver.EXTRA_CALLKIT_TYPE, 0)
             data.duration =
-                    bundle.getLong(CallkitIncomingBroadcastReceiver.EXTRA_CALLKIT_DURATION, 30000L)
+                bundle.getLong(CallkitIncomingBroadcastReceiver.EXTRA_CALLKIT_DURATION, 30000L)
             data.textAccept =
-                    bundle.getString(CallkitIncomingBroadcastReceiver.EXTRA_CALLKIT_TEXT_ACCEPT, "")
+                bundle.getString(CallkitIncomingBroadcastReceiver.EXTRA_CALLKIT_TEXT_ACCEPT, "")
             data.textDecline =
-                    bundle.getString(CallkitIncomingBroadcastReceiver.EXTRA_CALLKIT_TEXT_DECLINE, "")
+                bundle.getString(CallkitIncomingBroadcastReceiver.EXTRA_CALLKIT_TEXT_DECLINE, "")
             data.textMissedCall =
-                    bundle.getString(CallkitIncomingBroadcastReceiver.EXTRA_CALLKIT_TEXT_MISSED_CALL, "")
+                bundle.getString(CallkitIncomingBroadcastReceiver.EXTRA_CALLKIT_TEXT_MISSED_CALL, "")
             data.textCallback =
-                    bundle.getString(CallkitIncomingBroadcastReceiver.EXTRA_CALLKIT_TEXT_CALLBACK, "")
+                bundle.getString(CallkitIncomingBroadcastReceiver.EXTRA_CALLKIT_TEXT_CALLBACK, "")
             data.extra =
-                    bundle.getSerializable(CallkitIncomingBroadcastReceiver.EXTRA_CALLKIT_EXTRA) as HashMap<String, Any?>
+                bundle.getSerializable(CallkitIncomingBroadcastReceiver.EXTRA_CALLKIT_EXTRA) as HashMap<String, Any?>
             data.headers =
-                    bundle.getSerializable(CallkitIncomingBroadcastReceiver.EXTRA_CALLKIT_HEADERS) as HashMap<String, Any?>
+                bundle.getSerializable(CallkitIncomingBroadcastReceiver.EXTRA_CALLKIT_HEADERS) as HashMap<String, Any?>
 
             data.isCustomNotification = bundle.getBoolean(
-                    CallkitIncomingBroadcastReceiver.EXTRA_CALLKIT_IS_CUSTOM_NOTIFICATION,
-                    false
+                CallkitIncomingBroadcastReceiver.EXTRA_CALLKIT_IS_CUSTOM_NOTIFICATION,
+                false
             )
             data.isShowLogo = bundle.getBoolean(
-                    CallkitIncomingBroadcastReceiver.EXTRA_CALLKIT_IS_SHOW_LOGO,
-                    false
+                CallkitIncomingBroadcastReceiver.EXTRA_CALLKIT_IS_SHOW_LOGO,
+                false
             )
             data.isShowCallback = bundle.getBoolean(
-                    CallkitIncomingBroadcastReceiver.EXTRA_CALLKIT_IS_SHOW_CALLBACK,
-                    true
+                CallkitIncomingBroadcastReceiver.EXTRA_CALLKIT_IS_SHOW_CALLBACK,
+                true
             )
             data.ringtonePath = bundle.getString(
-                    CallkitIncomingBroadcastReceiver.EXTRA_CALLKIT_RINGTONE_PATH,
-                    ""
+                CallkitIncomingBroadcastReceiver.EXTRA_CALLKIT_RINGTONE_PATH,
+                ""
             )
             data.backgroundColor = bundle.getString(
-                    CallkitIncomingBroadcastReceiver.EXTRA_CALLKIT_BACKGROUND_COLOR,
-                    "#0955fa"
+                CallkitIncomingBroadcastReceiver.EXTRA_CALLKIT_BACKGROUND_COLOR,
+                "#0955fa"
             )
             data.backgroundUrl =
-                    bundle.getString(CallkitIncomingBroadcastReceiver.EXTRA_CALLKIT_BACKGROUND_URL, "")
+                bundle.getString(CallkitIncomingBroadcastReceiver.EXTRA_CALLKIT_BACKGROUND_URL, "")
             data.actionColor = bundle.getString(
-                    CallkitIncomingBroadcastReceiver.EXTRA_CALLKIT_ACTION_COLOR,
-                    "#4CAF50"
+                CallkitIncomingBroadcastReceiver.EXTRA_CALLKIT_ACTION_COLOR,
+                "#4CAF50"
             )
             data.from =
-                    bundle.getString(CallkitIncomingBroadcastReceiver.EXTRA_CALLKIT_ACTION_FROM, "")
+                bundle.getString(CallkitIncomingBroadcastReceiver.EXTRA_CALLKIT_ACTION_FROM, "")
             data.isShowMissedCallNotification = bundle.getBoolean(
-                    CallkitIncomingBroadcastReceiver.EXTRA_CALLKIT_IS_SHOW_MISSED_CALL_NOTIFICATION,
-                    true
+                CallkitIncomingBroadcastReceiver.EXTRA_CALLKIT_IS_SHOW_MISSED_CALL_NOTIFICATION,
+                true
+            )
+            data.incomingCallNotificationChannelName = bundle.getString(
+                CallkitIncomingBroadcastReceiver.EXTRA_CALLKIT_INCOMING_CALL_NOTIFICATION_CHANNEL_NAME
+            )
+            data.missedCallNotificationChannelName = bundle.getString(
+                CallkitIncomingBroadcastReceiver.EXTRA_CALLKIT_MISSED_CALL_NOTIFICATION_CHANNEL_NAME
             )
             return data
         }

@@ -9,7 +9,6 @@ import 'package:flutter/services.dart';
 /// * endAllCalls()
 ///
 class FlutterCallkitIncoming {
-  static Map callData = {};
   static const MethodChannel _channel =
       const MethodChannel('flutter_callkit_incoming');
   static const EventChannel _eventChannel =
@@ -69,7 +68,7 @@ class FlutterCallkitIncoming {
   /// Get active calls.
   /// On iOS: return active calls from Callkit.
   /// On Android: only return last call
-  static Future activeCalls() async {
+  static Future<dynamic> activeCalls() async {
     return await _channel.invokeMethod("activeCalls");
   }
 
@@ -82,17 +81,12 @@ class FlutterCallkitIncoming {
 
   static CallEvent? _receiveCallEvent(dynamic data) {
     var event = "";
-    callData = Map<String, dynamic>.from(data['body']);
     dynamic body = {};
     if (data is Map) {
       event = data['event'];
       body = Map<String, dynamic>.from(data['body']);
     }
     return CallEvent(event, body);
-  }
-
-  static getCallData() {
-    return callData;
   }
 }
 
