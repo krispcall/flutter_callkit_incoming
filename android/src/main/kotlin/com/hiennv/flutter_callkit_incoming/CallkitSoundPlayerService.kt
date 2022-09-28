@@ -10,6 +10,7 @@ import android.media.RingtoneManager
 import android.net.Uri
 import android.os.*
 import android.text.TextUtils
+import android.util.Log
 
 class CallkitSoundPlayerService : Service() {
 

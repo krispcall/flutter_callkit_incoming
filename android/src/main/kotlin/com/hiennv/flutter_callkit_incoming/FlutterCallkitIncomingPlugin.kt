@@ -3,6 +3,7 @@ package com.hiennv.flutter_callkit_incoming
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
@@ -22,8 +23,6 @@ import io.flutter.plugin.common.MethodChannel.Result
 class FlutterCallkitIncomingPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
 
     companion object {
-
-        private val TAG = "CallkitIncomingActivity"
 
         @SuppressLint("StaticFieldLeak")
         private var instance: FlutterCallkitIncomingPlugin? = null
@@ -66,7 +65,6 @@ class FlutterCallkitIncomingPlugin : FlutterPlugin, MethodCallHandler, ActivityA
     private var channel: MethodChannel? = null
     private var events: EventChannel? = null
 
-
     override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
         this.context = flutterPluginBinding.applicationContext
         callkitNotificationManager = CallkitNotificationManager(flutterPluginBinding.applicationContext)
@@ -76,22 +74,6 @@ class FlutterCallkitIncomingPlugin : FlutterPlugin, MethodCallHandler, ActivityA
             EventChannel(flutterPluginBinding.binaryMessenger, "flutter_callkit_incoming_events")
         events?.setStreamHandler(eventHandler)
         //       sharePluginWithRegister(flutterPluginBinding, this)
-    }
-
-    public fun showIncomingNotification(data: Data) {
-        data.from = "notification"
-        callkitNotificationManager?.showIncomingNotification(data.toBundle())
-        //send BroadcastReceiver
-        context?.sendBroadcast(
-            CallkitIncomingBroadcastReceiver.getIntentIncoming(
-                requireNotNull(context),
-                data.toBundle()
-            )
-        )
-    }
-
-    public fun showMissCallNotification(data: Data) {
-        callkitNotificationManager?.showIncomingNotification(data.toBundle())
     }
 
     public fun startCall(data: Data) {
@@ -130,7 +112,6 @@ class FlutterCallkitIncomingPlugin : FlutterPlugin, MethodCallHandler, ActivityA
         try {
             when (call.method) {
                 "showCallkitIncoming" -> {
-                    Log.e(TAG, "onMethodCall: showCallkitIncoming", )
                     val data = Data(call.arguments()?: HashMap<String, Any?>())
                     data.from = "notification"
                     //send BroadcastReceiver
@@ -213,6 +194,7 @@ class FlutterCallkitIncomingPlugin : FlutterPlugin, MethodCallHandler, ActivityA
     }
 
     override fun onDetachedFromActivityForConfigChanges() {
+        context?.stopService(Intent(context, CallkitSoundPlayerService::class.java))
     }
 
     override fun onReattachedToActivityForConfigChanges(binding: ActivityPluginBinding) {
@@ -220,7 +202,9 @@ class FlutterCallkitIncomingPlugin : FlutterPlugin, MethodCallHandler, ActivityA
         this.context = binding.activity.applicationContext
     }
 
-    override fun onDetachedFromActivity() {}
+    override fun onDetachedFromActivity() {
+        context?.stopService(Intent(context, CallkitSoundPlayerService::class.java))
+    }
 
 
     class EventCallbackHandler : EventChannel.StreamHandler {
