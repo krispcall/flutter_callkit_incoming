@@ -100,14 +100,7 @@ class CallkitIncomingActivity : Activity() {
         setContentView(R.layout.activity_callkit_incoming)
         initView()
         incomingData(intent)
-
-       /* registerReceiver(
-            endedCallkitIncomingBroadcastReceiver,
-            IntentFilter(ACTION_ENDED_CALL_INCOMING)
-        )*/
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-
             registerReceiver(
                 endedCallkitIncomingBroadcastReceiver,
                 IntentFilter("${packageName}.${ACTION_ENDED_CALL_INCOMING}"),
@@ -119,8 +112,6 @@ class CallkitIncomingActivity : Activity() {
                 IntentFilter("${packageName}.${ACTION_ENDED_CALL_INCOMING}")
             )
         }
-
-
     }
 
     private fun wakeLockRequest(duration: Long) {
